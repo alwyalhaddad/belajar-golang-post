@@ -1,9 +1,14 @@
-package main
+package middleware
 
 import (
 	"errors"
 	"net/http"
+
+	"github.com/alwyalhaddad/belajar-golang-post/models"
 )
+
+// Key is the username
+var users = map[string]models.Login{}
 
 var AuthError = errors.New("Unauthorized")
 
