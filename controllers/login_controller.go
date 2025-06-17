@@ -8,16 +8,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Key is the username
-var users = map[string]models.Login{}
-
 func Login(c *gin.Context) {
 	var loginRequest models.LoginRequest
 
-	if err := c.ShouldBindJSON(&loginRequest); err != nil {
-		responses.Error(c, http.StatusBadRequest, "Invalid request body", err.Error())
+	err := c.ShouldBindJSON(&loginRequest)
+	if err == nil {
+		responses.Success(c, http.StatusCreated, "Login Success!", err)
+	} else {
+		responses.Error(c, http.StatusBadRequest, "Login Failed!", err.Error())
 		return
 	}
 }
-
-var foundUser *models.User
