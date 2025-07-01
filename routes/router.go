@@ -1,15 +1,17 @@
 package routes
 
 import (
+	"github.com/alwyalhaddad/belajar-golang-post/controllers"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func MainRoutes(router *gin.Engine) {
+func MainRoutes(router *gin.Engine, db *gorm.DB) {
 	mainGroup := router.Group("")
 	{
-		mainGroup.POST("/register")
-		mainGroup.POST("/login")
-		mainGroup.POST("/protected")
-		mainGroup.POST("/logout")
+		mainGroup.POST("/register", controllers.Register(db))
+		mainGroup.POST("/login", controllers.Login(db))
+		// mainGroup.POST("/protected")
+		mainGroup.POST("/logout", controllers.Logout(db))
 	}
 }

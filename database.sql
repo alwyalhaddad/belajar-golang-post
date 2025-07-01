@@ -10,4 +10,16 @@ create table users
   primary key (user_id)
 ) engine = innoDB;
 
-select * from users
+create table sessions
+(
+  id int auto_increment ,
+  session_token varchar(255) not null unique,
+  user_id int not null,
+  expires_at timestamp not null,
+  created_at timestamp not null default current_timestamp,
+  updated_at timestamp not null default current_timestamp on update current_timestamp,
+  Foreign Key (user_id) REFERENCES users(user_id) on delete cascade,
+  primary key (id)
+) engine = innoDB;
+
+select * from sessions
