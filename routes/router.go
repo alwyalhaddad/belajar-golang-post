@@ -12,6 +12,7 @@ func MainRoutes(router *gin.Engine, db *gorm.DB) {
 		mainGroup.POST("/register", controllers.Register(db))
 		mainGroup.POST("/login", controllers.Login(db))
 		mainGroup.POST("/changepassword", controllers.ChangePassword(db))
+		mainGroup.POST("/forgotpassword", controllers.ForgotPassword(db))
 		mainGroup.POST("/logout", controllers.Logout(db))
 	}
 }
