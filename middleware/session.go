@@ -5,31 +5,39 @@ import (
 	"net/http"
 
 	"github.com/alwyalhaddad/belajar-golang-post/models"
+	"github.com/gin-gonic/gin"
 )
 
-// Key is the username
-var users = map[string]models.Login{}
+// Dummy
+var users = map[string]models.Login{
+	"admin": {SessionToken: "abc123def456", CSRFToken: "token_admin"},
+	"jhon":  {SessionToken: "xyz098uvw765", CSRFToken: "token_jhon"},
+}
 
-var AuthError = errors.New("Unauthorized")
+var authError = errors.New("Unauthorized")
 
-func Authorize(r *http.Request) error {
-	username := r.FormValue("username")
-	user, ok := users[username]
-	if !ok {
-		return AuthError
+func AuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		username := c.PostForm("username")
+		if username == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": authError.Error()})
+			return
+		}
+		user, ok := users[username]
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": authError.Error()})
+			return
+		}
+		st, err := c.Cookie("session_token")
+		if err != nil || st == "" || st != user.SessionToken {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": authError.Error()})
+			return
+		}
+		csrf := c.GetHeader("X-CSRF-TOKEN")
+		if csrf == "" || csrf != user.CSRFToken {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": authError.Error()})
+			return
+		}
+		c.Next()
 	}
-
-	// Get the Session Token from the cookie
-	st, err := r.Cookie("session_token")
-	if err != nil || st.Value == "" || st.Value != user.SessionToken {
-		return AuthError
-	}
-
-	//Get CSRF token from headers
-	csrf := r.Header.Get("X-CSRF-TOKEN")
-	if csrf != user.CSRFToken || csrf == "" {
-		return AuthError
-	}
-
-	return nil
 }

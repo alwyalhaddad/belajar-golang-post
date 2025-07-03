@@ -4,7 +4,7 @@ import "time"
 
 type StockAdjustment struct {
 	AdjustmentID   int64          `gorm:"column:adjustment_id;primary_key"`
-	ProductID      Product        `gorm:"foreignKey:ProductId;references:product_id"`
+	ProductID      Product        `gorm:"foreignKey:ProductID;references:product_id"`
 	UserID         User           `gorm:"foreignKey:UserID;references:user_id"`
 	AdjustmentType AdjustmentType `gorm:"embedded"`
 	QuantityChange int64          `gorm:"column:quantity_change"`
