@@ -17,3 +17,7 @@ type ChangePasswordRequest struct {
 	NewPassword        string `json:"new_password" binding:"required,min=9"`
 	ConfirmNewPassword string `json:"confirm_new_password" binding:"required"`
 }
+
+type ForgotPasswordRequest struct {
+	Email string `json:"email" binding:"required,email"`
+}

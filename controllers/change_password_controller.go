@@ -33,7 +33,7 @@ func ChangePassword(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		// Make sure AuthMiddleware stores user_id in c.Set("user_id", ...)
+		// Make sure AuthMiddleware stores user_id in c.Get("user_id")
 		userID, exists := c.Get("user_id")
 		if !exists {
 			log.Println("Error: UserID not found in context for change password")
