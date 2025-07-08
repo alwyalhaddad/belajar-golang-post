@@ -1,8 +1,6 @@
 package models
 
 import (
-	"crypto/rand"
-	"encoding/base64"
 	"errors"
 	"time"
 
@@ -21,16 +19,6 @@ type Session struct {
 
 func (s *Session) tableName() string {
 	return "sessions"
-}
-
-// GenerateSessionToken generates a unique and secure session token
-func GenerateSessionToken() (string, error) {
-	bytes := make([]byte, 32)
-	_, err := rand.Read(bytes)
-	if err != nil {
-		return "", err
-	}
-	return base64.URLEncoding.EncodeToString(bytes), nil
 }
 
 func (s *Session) BeforeCreate(tx *gorm.DB) (err error) {

@@ -7,6 +7,7 @@ import (
 
 	"github.com/alwyalhaddad/belajar-golang-post/models"
 	"github.com/alwyalhaddad/belajar-golang-post/responses"
+	"github.com/alwyalhaddad/belajar-golang-post/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -42,7 +43,7 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		// If authentication success, create new session token
-		sessionToken, err := models.GenerateSessionToken()
+		sessionToken, err := utils.GenerateSessionToken(32)
 		if err != nil {
 			log.Printf("Failed to generate session token: %v", err)
 			responses.Error(c, http.StatusInternalServerError, "Login Failed!", "Could not generate session token")
