@@ -15,8 +15,7 @@ func ChangePassword(db *gorm.DB) gin.HandlerFunc {
 		// Bind request body JSON to struct ChangePassword
 		var ChangePasswordRequest models.ChangePasswordRequest
 
-		err := c.ShouldBindBodyWithJSON(&ChangePasswordRequest)
-		if err != nil {
+		if err := c.ShouldBindBodyWithJSON(&ChangePasswordRequest); err != nil {
 			responses.Error(c, http.StatusBadRequest, "Change Password Failed!", err.Error())
 			return
 		}

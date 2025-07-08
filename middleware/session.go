@@ -38,6 +38,10 @@ func AuthMiddleware() gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": authError.Error()})
 			return
 		}
+		var session models.Session
+		c.Set("user_id", session.UserID)
 		c.Next()
 	}
 }
+
+// update new middleware soon

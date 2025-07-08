@@ -3,9 +3,11 @@ package controllers
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/alwyalhaddad/belajar-golang-post/models"
 	"github.com/alwyalhaddad/belajar-golang-post/responses"
+	"github.com/alwyalhaddad/belajar-golang-post/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -36,6 +38,34 @@ func ForgotPassword(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		// Use a longer, more secure GenerateToken
-		// resetToken := models.GenerateSessionToken(32)
+		resetToken, _ := utils.GenerateSessionToken(32)
+
+		// Set time token expires to database for user
+		expiresAt := time.Now().Add(1 * time.Hour)
+
+		// Save token and time expires to database
+		if err := db.Model(&user).Updates(map[string]interface{}{
+			"PasswordResetToken":     resetToken,
+			"PasswordResetExpiresAt": expiresAt,
+		}).Error; err != nil {
+			log.Printf("Error saving password reset token for user %d: %v", user.UserID, err)
+			responses.Error(c, http.StatusInternalServerError, "Forgot Password Failed!", "Could not generate token.")
+			return
+		}
+
+		// Send email reset password to user
+		// This is placeholder, u should implement sendEmail
+		resetLink := "http://bloodiestore.com/reset-password?token=" + resetToken
+		emailBody := "Dear" + user.Username + ",\n\n" +
+			"You have requested to reset your password. please click on the link below to reset your passwor \n" +
+			resetLink + "\n\n" +
+			"This link will expire in 1 hour. if you did not request this, please ignore this email.\n\n" +
+			"Thanks, \nbloodiestore"
+
+		if err := utils.SendPasswordResetEmail(user.Email, "Password Reset Request", emailBody); err != nil {
+			log.Printf("Failed to send reset email %s: %v", user.Email, err)
+		}
+		// Response success
+		responses.Success(c, http.StatusOK, "Forgot Password Received!", "If your email is registered, you will receive a password reset link shortly.")
 	}
 }
