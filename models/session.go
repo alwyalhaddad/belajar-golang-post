@@ -1,8 +1,6 @@
 package models
 
 import (
-	"crypto/rand"
-	"encoding/base64"
 	"errors"
 	"time"
 
@@ -23,25 +21,13 @@ func (s *Session) tableName() string {
 	return "sessions"
 }
 
-// GenerateSessionToken generates a unique and secure session token
-func GenerateSessionToken() (string, error) {
-	bytes := make([]byte, 32)
-	_, err := rand.Read(bytes)
-	if err != nil {
-		return "", err
-	}
-	return base64.URLEncoding.EncodeToString(bytes), nil
+func (s *Session) IsExpired() bool {
+	return time.Now().After(s.ExpiresAt)
 }
 
 func (s *Session) BeforeCreate(tx *gorm.DB) (err error) {
-	if s.SessionToken == "" {
-		return errors.New("SessionToken cannot be empty")
+	if s.SessionToken == "" || s.UserID == 0 || s.ExpiresAt.IsZero() {
+		return errors.New("SessionToken, UserID, and ExpiresAt cannot be empty in session")
 	}
-	if s.UserID == 0 {
-		return errors.New("userID cannot be 0")
-	}
-	if s.ExpiresAt.Before(time.Now()) {
-		return errors.New("ExpiresAt must be in the future")
-	}
-	return
+	return nil
 }
