@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -54,17 +55,16 @@ func ForgotPassword(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		// Send email reset password to user
-		// This is placeholder, u should implement sendEmail
-		resetLink := "http://bloodiestore.com/reset-password?token=" + resetToken
-		emailBody := "Dear" + user.Username + ",\n\n" +
-			"You have requested to reset your password. please click on the link below to reset your passwor \n" +
-			resetLink + "\n\n" +
-			"This link will expire in 1 hour. if you did not request this, please ignore this email.\n\n" +
-			"Thanks, \nbloodiestore"
+		resetLink := fmt.Sprintf("http://localhost:8080/reset-password?token=%s", resetToken)
+		emailBody := fmt.Sprintf("Dear %s,\n\n", user.Username) +
+			fmt.Sprintf("You have requested to reset your password. Please click on the link below to reset your password:\n%s\n\n", resetLink) +
+			"This link will expire in 1 hour. If you did not request this, please ignore this email.\n\n" +
+			"Thanks,\n\nBlockchainStore"
 
 		if err := utils.SendPasswordResetEmail(user.Email, "Password Reset Request", emailBody); err != nil {
 			log.Printf("Failed to send reset email %s: %v", user.Email, err)
 		}
+
 		// Response success
 		responses.Success(c, http.StatusOK, "Forgot Password Received!", "If your email is registered, you will receive a password reset link shortly.")
 	}

@@ -16,8 +16,8 @@ type User struct {
 	Role                   string    `gorm:"column:role" json:"role"`
 	CreatedAt              time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
 	UpdatedAt              time.Time `gorm:"column:updated_at;autoCreateTime;autoUpdateTime" json:"updated_at"`
-	PasswordResetToken     string    `gorm:"size:255;index" json:"-"`
-	PasswordResetExpiresAt time.Time `json:"-"`
+	PasswordResetToken     string    `gorm:"column:password_reset_token;size:255;index;default:null" json:"-"`
+	PasswordResetExpiresAt time.Time `gorm:"column:password_reset_expires_at;default:null" json:"-"`
 }
 
 func (u *User) tableName() string {

@@ -50,9 +50,18 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
+		// Make CSRF Token
+		csrfToken, err := utils.GenerateSessionToken(16)
+		if err != nil {
+			log.Printf("Failed to generate CSRF token: %v", err)
+			responses.Error(c, http.StatusInternalServerError, "Login Failed!", "Could not generate CSRF token")
+			return
+		}
+
 		// Set session expiration time (for example, 24 hours from now)
 		expiresAt := time.Now().Add(24 * time.Hour)
 
+		// Create New Session
 		newSession := models.Session{
 			SessionToken: sessionToken,
 			UserID:       uint(user.UserID),
@@ -65,15 +74,17 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		// Set session token in cookie HTTP-only
+		//Set session token in cookie HTTP-Only
 		c.SetCookie("session_token", sessionToken, int(expiresAt.Unix()-time.Now().Unix()), "/", "localhost", false, true)
-		c.SetCookie("email", user.Email, int(expiresAt.Unix()-time.Now().Unix()), "/", "localhost", false, true)
 
-		// Success respone to client
+		//Set email in cookie.
+		c.SetCookie("email", user.Email, int(expiresAt.Unix()-time.Now().Unix()), "/", "localhost", false, false)
+
 		responses.Success(c, http.StatusOK, "Login Success!", gin.H{
-			"message":      "Login successful",
+			"message":      "Login Successful",
 			"email":        user.Email,
 			"sessionToken": sessionToken,
+			"csrfToken":    csrfToken,
 			"expiresAt":    expiresAt.Format(time.RFC3339),
 		})
 	}

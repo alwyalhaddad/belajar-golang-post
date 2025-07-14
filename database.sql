@@ -23,3 +23,9 @@ create table sessions
 ) engine = innoDB;
 
 select * from sessions
+
+ALTER TABLE users
+ADD COLUMN password_reset_expires_at DATETIME;
+
+ALTER TABLE users
+ADD COLUMN password_reset_token VARCHAR(255);

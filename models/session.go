@@ -21,15 +21,13 @@ func (s *Session) tableName() string {
 	return "sessions"
 }
 
+func (s *Session) IsExpired() bool {
+	return time.Now().After(s.ExpiresAt)
+}
+
 func (s *Session) BeforeCreate(tx *gorm.DB) (err error) {
-	if s.SessionToken == "" {
-		return errors.New("SessionToken cannot be empty")
+	if s.SessionToken == "" || s.UserID == 0 || s.ExpiresAt.IsZero() {
+		return errors.New("SessionToken, UserID, and ExpiresAt cannot be empty in session")
 	}
-	if s.UserID == 0 {
-		return errors.New("userID cannot be 0")
-	}
-	if s.ExpiresAt.Before(time.Now()) {
-		return errors.New("ExpiresAt must be in the future")
-	}
-	return
+	return nil
 }
