@@ -5,41 +5,52 @@ import (
 )
 
 type Order struct {
-	OrderID        int64         `gorm:"column:order_id;primary_key"`
-	TotalAmount    int64         `gorm:"column:total_amount"`
-	TotalPaid      int64         `gorm:"column:total_paid"`
-	ChangeDue      int64         `gorm:"column:change_due"`
+	ID             int64         `gorm:"column:id;primary_key" json:"id"`
+	TotalAmount    float64       `gorm:"type:decimal(10,2)" json:"total_amount"`
+	TotalPaid      float64       `gorm:"type:decimal(10,2)" json:"total_paid"`
+	ChangeDue      float64       `gorm:"type:decimal(10,2)" json:"change_due"`
 	PaymentMethod  PaymentMethod `gorm:"embedded"`
 	Status         Status        `gorm:"embedded"`
-	UserID         User          `gorm:"foreignKey:UserID;references:user_id"`
-	CustomerID     *int64        // FK (automatis jika nil)
-	Customer       *Customer
-	DiscountAmount int64     `gorm:"column:discount_amount"`
-	TaxAmount      int64     `gorm:"column:tax_amount"`
-	OrderDate      time.Time `gorm:"column:order_date;type:date;index"`
-	CreatedAt      time.Time `gorm:"column:created_at;autoCreateTime"`
-	UpdatedAt      time.Time `gorm:"column:updated_at;autoCreateTime;autoUpdateTime"`
+	UserID         int64         `json:"user_id"` // Foreign key to user
+	User           User          `json:"user"`
+	CustomerID     *uint         `json:"customer_id"` // Foreign key to customer, nullable
+	Customer       Customer      `json:"customer"`
+	DiscountAmount float64       `gorm:"type:decimal(10,2)" json:"discount_amount"`
+	TaxAmount      float64       `gorm:"type:decimal(10,2)" json:"tax_amount"`
+	OrderDate      time.Time     `gorm:"type:date;index;not null" json:"order_date"`
+	CreatedAt      time.Time     `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt      time.Time     `gorm:"autoUpdateTime" json:"updated_at"`
 }
 
-type PaymentMethod struct {
-	Cash string `gorm:"column:cash"`
-	QRIS string `gorm:"column:qris"`
-	Card string `gorm:"column:card"`
-}
-
-type Status struct {
-	Completed string `gorm:"column:completed"`
-	Pending   string `gorm:"column:pending"`
-	Cancelled string `gorm:"column:cancelled"`
-	Returned  string `gorm:"column:returned"`
+func (o *Order) TableName() string {
+	return "orders"
 }
 
 type OrderItem struct {
-	OrderItemID  int64     `gorm:"column:order_item_id;primary_key"`
-	OrderID      Order     `gorm:"foreignKey:OrderID;references:order_id"`
-	ProductID    Product   `gorm:"foreignKey:ProductID;references:product_id"`
-	Quantity     int64     `gorm:"column:quantity"`
-	PricePerUnit int64     `gorm:"column:price_per_unit"`
-	Subtotal     int64     `gorm:"column:subtotal"`
-	CreatedAt    time.Time `gorm:"column:created_at;autoCreateTime"`
+	ID           int64     `gorm:"column:id;primaryKey" json:"id"`
+	OrderID      int64     `gorm:"not null" json:"order_id"` // Foreign key to order
+	Order        Order     `gorm:"foreignKey:OrderID" json:"order"`
+	ProductID    int64     `gorm:"not null" json:"product_id"` // Foreign key to product
+	Product      Product   `gorm:"foreignKey:ProductID" json:"product"`
+	Quantity     int64     `gorm:"not null" json:"quantity"`
+	PricePerUnit float64   `gorm:"type:decimal(10,2);not null" json:"price_per_unit"`
+	Subtotal     float64   `gorm:"type:decimal(10,2);not null" json:"sub_total"`
+	CreatedAt    time.Time `gorm:"autoCreateTime"`
+}
+
+func (oi *OrderItem) TableName() string {
+	return "order_items"
+}
+
+type PaymentMethod struct {
+	Cash string `json:"cash"`
+	QRIS string `json:"qris"`
+	Card string `json:"card"`
+}
+
+type Status struct {
+	Completed string `json:"completed"`
+	Pending   string `json:"pending"`
+	Cancelled string `json:"cancelled"`
+	Returned  string `json:"returned"`
 }

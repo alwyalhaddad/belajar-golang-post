@@ -13,6 +13,10 @@ type StockAdjustment struct {
 	CreatedAt      time.Time      `gorm:"column:created_at;autoCreateTime"`
 }
 
+func (sa *StockAdjustment) TableName() string {
+	return "stock_adjustments"
+}
+
 type AdjustmentType struct {
 	Add                  string `gorm:"column:add"`
 	Remove               string `gorm:"column:remove"`

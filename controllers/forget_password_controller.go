@@ -16,9 +16,9 @@ import (
 func ForgotPassword(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Bind request body JSON to struct ForgotPassword
-		var ForgotPasswordRequest models.ForgotPasswordRequest
+		var request models.ForgotPasswordRequest
 
-		if err := c.ShouldBindBodyWithJSON(&ForgotPasswordRequest); err != nil {
+		if err := c.ShouldBindBodyWithJSON(&request); err != nil {
 			responses.Error(c, http.StatusBadRequest, "Forgot Password Failed!", err.Error())
 			return
 		}
@@ -26,13 +26,13 @@ func ForgotPassword(db *gorm.DB) gin.HandlerFunc {
 		// Find user by email
 		var user models.User
 
-		if err := db.Where("email = ?", ForgotPasswordRequest.Email).First(&user).Error; err != nil {
+		if err := db.Where("email = ?", request.Email).First(&user).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
-				log.Printf("Forgot password: Email %s not found, but sending success responses for security.", ForgotPasswordRequest.Email)
+				log.Printf("Forgot password: Email %s not found, but sending success responses for security.", request.Email)
 				responses.Success(c, http.StatusOK, "Forgot Password Request Received!", "If your email is registered, you will receive a password link sortly.")
 				return
 			} else {
-				log.Printf("Database error finding user by email %s: %v", ForgotPasswordRequest.Email, err)
+				log.Printf("Database error finding user by email %s: %v", request.Email, err)
 				responses.Error(c, http.StatusInternalServerError, "Forgot Password Failed!", "Internal server error")
 				return
 			}
@@ -49,7 +49,7 @@ func ForgotPassword(db *gorm.DB) gin.HandlerFunc {
 			"PasswordResetToken":     resetToken,
 			"PasswordResetExpiresAt": expiresAt,
 		}).Error; err != nil {
-			log.Printf("Error saving password reset token for user %d: %v", user.UserID, err)
+			log.Printf("Error saving password reset token for user %d: %v", user.ID, err)
 			responses.Error(c, http.StatusInternalServerError, "Forgot Password Failed!", "Could not generate token.")
 			return
 		}

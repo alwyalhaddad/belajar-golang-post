@@ -13,21 +13,21 @@ import (
 func ChangePassword(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Bind request body JSON to struct ChangePassword
-		var ChangePasswordRequest models.ChangePasswordRequest
+		var request models.ChangePasswordRequest
 
-		if err := c.ShouldBindBodyWithJSON(&ChangePasswordRequest); err != nil {
+		if err := c.ShouldBindBodyWithJSON(&request); err != nil {
 			responses.Error(c, http.StatusBadRequest, "Change Password Failed!", err.Error())
 			return
 		}
 
 		// Validation new password and confirm
-		if ChangePasswordRequest.NewPassword != ChangePasswordRequest.ConfirmNewPassword {
+		if request.NewPassword != request.ConfirmNewPassword {
 			responses.Error(c, http.StatusBadRequest, "Change Password Failed!", "New password and confirmation do not match.")
 			return
 		}
 
 		// Checking if new password do not same with the old password
-		if ChangePasswordRequest.NewPassword == ChangePasswordRequest.OldPassword {
+		if request.NewPassword == request.OldPassword {
 			responses.Error(c, http.StatusBadRequest, "Change Password Failed!", "New password cannot be the same as old password.")
 			return
 		}
@@ -56,13 +56,13 @@ func ChangePassword(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		// Verification old password
-		if !user.CheckPasswordHash(ChangePasswordRequest.OldPassword) {
+		if !user.CheckPasswordHash(request.OldPassword) {
 			responses.Error(c, http.StatusUnauthorized, "Change Password Failed", "Incorrect old password")
 			return
 		}
 
 		// New hash password
-		if err := user.HashPassword(ChangePasswordRequest.NewPassword); err != nil {
+		if err := user.HashPassword(request.NewPassword); err != nil {
 			log.Printf("Error hashing new password for user %d: %v", id, err)
 			responses.Error(c, http.StatusInternalServerError, "Change Password Failed!", "Could not process new password.")
 			return
