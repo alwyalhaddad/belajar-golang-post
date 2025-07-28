@@ -8,16 +8,16 @@ import (
 )
 
 type Session struct {
-	ID           uint      `gorm:"primaryKey" json:"id"`
+	ID           uint      `gorm:"column:id;primaryKey" json:"id"`
 	SessionToken string    `gorm:"uniqueIndex;size:255;not null" json:"session_token" secure:"true" httpOnly:"true"`
-	UserID       uint      `gorm:"not null" json:"user_id"`
+	UserID       int64     `gorm:"not null" json:"user_id"`
+	User         User      `gorm:"foreignKey:UserID" json:"user"`
 	ExpiresAt    time.Time `gorm:"not null" json:"expires_at"`
 	CreatedAt    time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt    time.Time `gorm:"autoUpdateTime" json:"updated_at"`
-	User         User      `gorm:"foreignKey:UserID;references:user_id"`
 }
 
-func (s *Session) tableName() string {
+func (s *Session) TableName() string {
 	return "sessions"
 }
 

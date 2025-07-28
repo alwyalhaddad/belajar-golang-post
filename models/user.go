@@ -9,18 +9,18 @@ import (
 )
 
 type User struct {
-	UserID                 int64     `gorm:"column:user_id;primary_key" json:"userid"`
-	Username               string    `gorm:"column:username;unique" json:"username" binding:"required"`
+	ID                     int64     `gorm:"column:id;primaryKey" json:"id"`
+	Username               string    `gorm:"column:username;not null;size:100;unique" json:"username" binding:"required"`
 	PasswordHash           string    `gorm:"column:password_hash" json:"-"` // Don't marshal password into JSON response
 	Email                  string    `gorm:"column:email;unique" json:"email" binding:"required"`
 	Role                   string    `gorm:"column:role" json:"role"`
-	CreatedAt              time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
-	UpdatedAt              time.Time `gorm:"column:updated_at;autoCreateTime;autoUpdateTime" json:"updated_at"`
+	CreatedAt              time.Time `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt              time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 	PasswordResetToken     string    `gorm:"column:password_reset_token;size:255;index;default:null" json:"-"`
 	PasswordResetExpiresAt time.Time `gorm:"column:password_reset_expires_at;default:null" json:"-"`
 }
 
-func (u *User) tableName() string {
+func (u *User) TableName() string {
 	return "users"
 }
 

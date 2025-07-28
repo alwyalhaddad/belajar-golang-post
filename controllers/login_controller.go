@@ -15,9 +15,9 @@ import (
 func Login(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//Bind request body JSON to struct LoginUserRequest
-		var loginRequest models.LoginUserRequest
+		var request models.LoginUserRequest
 
-		err := c.ShouldBindBodyWithJSON(&loginRequest)
+		err := c.ShouldBindBodyWithJSON(&request)
 		if err != nil {
 			responses.Error(c, http.StatusBadRequest, "Invalid Request Body", err.Error())
 			return
@@ -26,18 +26,18 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 		// Find users in DB based on email
 		var user models.User
 
-		if err = db.Where("email = ?", loginRequest.Email).First(&user).Error; err != nil {
+		if err = db.Where("email = ?", request.Email).First(&user).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
 				responses.Error(c, http.StatusUnauthorized, "Login Failed!", "Invalid email or password")
 			} else {
-				log.Printf("Database error finding user %s: %v", loginRequest.Email, err)
+				log.Printf("Database error finding user %s: %v", request.Email, err)
 				responses.Error(c, http.StatusInternalServerError, "Login Failed!", "Internal server error")
 			}
 			return
 		}
 
 		// Verify Password
-		if !user.CheckPasswordHash(loginRequest.Password) {
+		if !user.CheckPasswordHash(request.Password) {
 			responses.Error(c, http.StatusUnauthorized, "Login Failed!", "Invalid email or password")
 			return
 		}
@@ -64,12 +64,12 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 		// Create New Session
 		newSession := models.Session{
 			SessionToken: sessionToken,
-			UserID:       uint(user.UserID),
+			UserID:       int64(user.ID),
 			ExpiresAt:    expiresAt,
 		}
 
 		if err := db.Create(&newSession).Error; err != nil {
-			log.Printf("Failed to save session to database for user %d: %v", user.UserID, err)
+			log.Printf("Failed to save session to database for user %d: %v", user.ID, err)
 			responses.Error(c, http.StatusInternalServerError, "Login Failed!", "Could not create session.")
 			return
 		}

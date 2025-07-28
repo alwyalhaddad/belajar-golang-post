@@ -3,16 +3,21 @@ package models
 import "time"
 
 type Product struct {
-	ProductID     int64     `gorm:"column:product_id;primary_key"`
-	Sku           int64     `gorm:"column:stock_keeping_unit;<-:create"`
-	Name          string    `gorm:"column:name"`
-	Description   string    `gorm:"column:description"`
-	Price         int64     `gorm:"column:price"`
-	CostPrice     int64     `gorm:"column:cost_price"`
-	StockQuantity int64     `gorm:"column:stock_quantity"`
-	IsActive      bool      `gorm:"column:is_active"`
-	CategoryID    Category  `gorm:"foreignKey:CategoryID;references:category_id"`
-	SupplierID    Supplier  `gorm:"foreignKey:SupplierID;references:supplier_id"`
-	CreatedAt     time.Time `gorm:"column:created_at;autoCreateTime"`
-	UpdatedAt     time.Time `gorm:"column:updated_at;autoCreateTime;autoUpdateTime"`
+	ID            int64     `gorm:"column:id;primary_key" json:"id"`
+	Name          string    `gorm:"column:name;not null;size:100;unique" json:"name"`
+	Description   string    `gorm:"size:500" json:"description"`
+	Price         float64   `gorm:"not null;type:decimal(10,2)" json:"price"`
+	CostPrice     float64   `gorm:"not null;type:decimal(10,2)" json:"cost_price"`
+	StockQuantity int64     `gorm:"not null" json:"stock_quantity"`
+	IsActive      bool      `gorm:"not null" json:"is_active"`
+	CategoryID    int64     `gorm:"not null" json:"category_id"`
+	Category      Category  `gorm:"foreginKey:CategoryID" json:"category"`
+	SupplierID    int64     `gorm:"not null" json:"supplier_id"`
+	Supplier      Supplier  `gorm:"foreignKey:SupplierID" json:"supplier"`
+	CreatedAt     time.Time `gorm:"autoCreateTime"`
+	UpdatedAt     time.Time `gorm:"autoUpdateTime"`
+}
+
+func (p *Product) TableName() string {
+	return "products"
 }
