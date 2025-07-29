@@ -17,5 +17,8 @@ func GetAllProduct(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
+		responses.Success(c, http.StatusOK, "Get product success", gin.H{
+			"message": "Get all product successfuly",
+		})
 	}
 }
