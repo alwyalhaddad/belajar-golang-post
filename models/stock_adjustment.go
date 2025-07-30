@@ -3,14 +3,16 @@ package models
 import "time"
 
 type StockAdjustment struct {
-	AdjustmentID   int64          `gorm:"column:adjustment_id;primary_key"`
-	ProductID      Product        `gorm:"foreignKey:ProductID;references:product_id"`
-	UserID         User           `gorm:"foreignKey:UserID;references:user_id"`
+	ID             int64          `gorm:"column:id;primary_key" json:"id"`
+	ProductID      int64          `gorm:"not null" json:"product_id"`
+	Product        Product        `gorm:"foreignKey:ProductID" json:"product"`
+	UserID         int64          `gorm:"not null" json:"user_id"`
+	User           User           `gorm:"foreignKey:UserID" json:"user"`
 	AdjustmentType AdjustmentType `gorm:"embedded"`
-	QuantityChange int64          `gorm:"column:quantity_change"`
-	Reason         string         `gorm:"column:reason"`
-	AdjustmentDate time.Time      `gorm:"column:adjustment_date;type:date"`
-	CreatedAt      time.Time      `gorm:"column:created_at;autoCreateTime"`
+	QuantityChange int64          `gorm:"not null" json:"quantity_change"`
+	Reason         string         `gorm:"not null" json:"reason"`
+	AdjustmentDate time.Time      `gorm:"type:date" json:"adjustment_date"`
+	CreatedAt      time.Time      `gorm:"autoCreateTime" json:"created_at"`
 }
 
 func (sa *StockAdjustment) TableName() string {
