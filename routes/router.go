@@ -15,8 +15,8 @@ func MainRoutes(router *gin.Engine, db *gorm.DB) {
 		mainGroup.POST("/logout", controllers.Logout(db))
 		mainGroup.POST("/products", controllers.CreateProduct(db))
 		mainGroup.GET("/products", controllers.GetAllProduct(db))
-		mainGroup.GET("/products/{id}", controllers.GetProductById(db))
-		mainGroup.PUT("/products/{id}")
+		mainGroup.GET("/products/:id", controllers.GetProductById(db))
+		mainGroup.PUT("/products/:id")
 		mainGroup.POST("/forgotpassword", controllers.ForgotPassword(db))
 		mainGroup.POST("/changepassword", middleware.AuthMiddleware(db), controllers.ChangePassword(db))
 	}

@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/alwyalhaddad/belajar-golang-post/models"
 	"github.com/alwyalhaddad/belajar-golang-post/utils"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -34,6 +35,21 @@ func ConnectDatabase() (*gorm.DB, error) {
 	sqlDB.SetMaxOpenConns(100)
 	sqlDB.SetConnMaxLifetime(60 * time.Minute)
 	sqlDB.SetConnMaxIdleTime(10 * time.Minute)
+
+	// DB auto migrate
+	err = db.AutoMigrate(
+		&models.User{},
+		&models.Category{},
+		&models.Supplier{},
+		&models.Product{},
+		&models.CreateProductRequest{},
+	)
+
+	if err != nil {
+		log.Fatalf("Failed to auto-migrate: %v", err)
+	}
+
+	log.Println("Auto-migrate all table success")
 
 	return db, nil
 }

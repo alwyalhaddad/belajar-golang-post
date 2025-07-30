@@ -31,11 +31,15 @@ type CreateProductRequest struct {
 	Name          string  `json:"name" binding:"omitempty,min=3,max=100"`
 	Description   string  `json:"description" binding:"max=500"`
 	Price         float64 `json:"price" binding:"required,min=0"`
-	CostPrice     int64   `json:"cost_price" binding:"required,min=0"`
+	CostPrice     float64 `json:"cost_price" binding:"required,min=0"`
 	StockQuantity int64   `json:"stock_quantity" binding:"required,min=0"`
 	IsActive      bool    `json:"is_active"`
 	CategoryID    int64   `json:"category_id" binding:"required"`
 	SupplierID    int64   `json:"supplier_id" binding:"required"`
+}
+
+func (cpr *CreateProductRequest) TableName() string {
+	return "create_product_requests"
 }
 
 type UpdateProductRequest struct {

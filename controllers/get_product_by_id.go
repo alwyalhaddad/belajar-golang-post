@@ -30,6 +30,7 @@ func GetProductById(db *gorm.DB) gin.HandlerFunc {
 		}
 		responses.Success(c, http.StatusOK, "Get product success", gin.H{
 			"message": "Get product by id successfuly",
+			"product": request,
 		})
 	}
 }
