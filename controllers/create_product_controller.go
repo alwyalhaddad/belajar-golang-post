@@ -24,13 +24,26 @@ func CreateProduct(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		if err := db.Create(&request).Error; err != nil {
+		product := models.Product{
+			Name:          request.Name,
+			Description:   request.Description,
+			Price:         request.Price,
+			CostPrice:     request.CostPrice,
+			StockQuantity: request.StockQuantity,
+			IsActive:      request.IsActive,
+			CategoryID:    request.CategoryID,
+			SupplierID:    request.SupplierID,
+		}
+
+		// Save struct to product database
+		if err := db.Create(&product).Error; err != nil {
 			responses.Error(c, http.StatusInternalServerError, "Failed to Create Product", err.Error())
 			return
 		}
 
 		responses.Success(c, http.StatusOK, "Create Product Success!", gin.H{
 			"message": "Create Product Successfuly!",
+			"product": product,
 		})
 	}
 }

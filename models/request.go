@@ -38,10 +38,6 @@ type CreateProductRequest struct {
 	SupplierID    int64   `json:"supplier_id" binding:"required"`
 }
 
-func (cpr *CreateProductRequest) TableName() string {
-	return "create_product_requests"
-}
-
 type UpdateProductRequest struct {
 	Name          *string  `json:"name" binding:"omitempty,min=3,max=100"`
 	Description   *string  `json:"description" binding:"omitempty,max=500"`
