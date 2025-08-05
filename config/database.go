@@ -43,6 +43,8 @@ func ConnectDatabase() (*gorm.DB, error) {
 		&models.Supplier{},
 		&models.Product{},
 		&models.CreateProductRequest{},
+		&models.Cart{},
+		&models.CartItem{},
 	)
 
 	if err != nil {
