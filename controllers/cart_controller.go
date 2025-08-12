@@ -5,16 +5,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// For manage shopping cart operations
-type CartController struct {
-	DB *gorm.DB
-}
-
-// For make new instance from CartController
-func NewCartController(db *gorm.DB) *CartController {
-	return &CartController{DB: db}
-}
-
 func GetAuthenticatedUserID(c *gin.Context) (int64, error) {
 	UserID, exist := c.Get("UserID")
 	if !exist {
