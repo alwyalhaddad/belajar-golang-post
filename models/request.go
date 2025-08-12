@@ -48,3 +48,8 @@ type UpdateProductRequest struct {
 	CategoryID    *uint    `json:"category_id" binding:"omitempty"`
 	SupplierID    *uint    `json:"supplier_id" binding:"omitempty"`
 }
+
+type CartRequest struct {
+	ProductID int64 `json:"product_id" binding:"required"`
+	Quantity  int64 `json:"quantity" binding:"required"`
+}

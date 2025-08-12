@@ -17,3 +17,13 @@ type Cart struct {
 func (c *Cart) TableName() string {
 	return "carts"
 }
+
+// For manage shopping cart operations
+type CartController struct {
+	DB *gorm.DB
+}
+
+// For make new instance from CartController
+func NewCartController(db *gorm.DB) *CartController {
+	return &CartController{DB: db}
+}
