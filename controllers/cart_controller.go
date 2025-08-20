@@ -164,8 +164,8 @@ func UpdateCartItemQuantity(db *gorm.DB) gin.HandlerFunc {
 		// Make sure cart item belong to correct user & correct shopping cart
 		var cartItem models.CartItem
 
-		err = db.Joins("JOIN cart ON cart.id = cart_items.cart_id").Where("cart_item = ? AND carts.user_id = ?", cartItemID, userID).
-			First(&cartItem).Error
+		err = db.Joins("JOIN cart ON cart.id = cart_items.cart_id").
+			Where("cart_item = ? AND carts.user_id = ?", cartItemID, userID).First(&cartItem).Error
 
 		if err != nil {
 			if err == gorm.ErrRecordNotFound {
@@ -195,5 +195,45 @@ func UpdateCartItemQuantity(db *gorm.DB) gin.HandlerFunc {
 		responses.Success(c, http.StatusOK, "Update cart item successfuly", gin.H{
 			"message": "Update cart item successfuly",
 		})
+	}
+}
+
+func RemoveCartItem(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		cartItemIDStr := c.Param("id")
+		cartItemID, err := strconv.ParseUint(cartItemIDStr, 10, 64)
+		if err != nil {
+			responses.Error(c, http.StatusBadRequest, "Invalid cart item id", "Cart item id must be number")
+			return
+		}
+
+		userID, err := GetAuthenticatedUserID(c)
+		if err != nil {
+			responses.Error(c, http.StatusUnauthorized, "Unauthorized", "User not authenticated")
+			return
+		}
+
+		// Make sure cart item is belong to correct owner & correct shopping cart
+		var cartItem models.CartItem
+
+		err = db.Joins("JOIN carts on carts.id = cart_items.cart_id").
+			Where("cart_items.id = ? AND carts.user_id = ?", cartItemID, userID).
+			First(&cartItem).Error
+
+		if err != nil {
+			if err == gorm.ErrRecordNotFound {
+				responses.Error(c, http.StatusNotFound, "Cart item not found", "Cart item not found or not yours ")
+				return
+			}
+			responses.Error(c, http.StatusInternalServerError, "Failed to retrive cart", err.Error())
+			return
+		}
+
+		if err := db.Delete(&cartItem).Error; err != nil {
+			responses.Error(c, http.StatusInternalServerError, "Failed to delete cart item", err.Error())
+			return
+		}
+
+		c.Status(http.StatusNoContent) // 204 no content for success deleting cart item
 	}
 }
