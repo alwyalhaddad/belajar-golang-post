@@ -31,7 +31,7 @@ func MainRoutes(router *gin.Engine, db *gorm.DB) {
 	cartGroup.Use(authMiddleware)
 	{
 		cartGroup.POST("/items", controllers.AddItemToCart(db))
-		cartGroup.GET("/items", controllers.GetCart(db))
+		cartGroup.GET("", controllers.GetCart(db))
 		cartGroup.PUT("/items/:id", controllers.UpdateCartItemQuantity(db))
 		cartGroup.DELETE("items/:id", controllers.RemoveCartItem(db))
 	}

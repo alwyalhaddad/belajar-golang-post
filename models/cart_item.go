@@ -9,6 +9,7 @@ import (
 type CartItem struct {
 	ID               int64          `gorm:"column:id;primaryKey" json:"id"`
 	CartID           int64          `gorm:"not null" json:"cart_id"`
+	Cart             Cart           `gorm:"foreignKey:CartID" json:"cart"`
 	ProductID        int64          `gorm:"not null" json:"product_id"`
 	Product          Product        `gorm:"foreignKey:ProductID" json:"product"`
 	Quantity         int            `gorm:"not null;default:1" json:"quantity"`
