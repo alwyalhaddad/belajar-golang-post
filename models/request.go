@@ -1,12 +1,10 @@
 package models
 
-// Request to login_controller.go
 type LoginUserRequest struct {
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required"`
 }
 
-// Request to register_controller.go
 type RegisterUserRequest struct {
 	Username string `json:"username" binding:"required"`
 	Email    string `json:"email" binding:"required"`
@@ -14,19 +12,16 @@ type RegisterUserRequest struct {
 	Role     string `json:"role"`
 }
 
-// Request to change_password_controller.go
 type ChangePasswordRequest struct {
 	OldPassword        string `json:"old_password" binding:"required"`
 	NewPassword        string `json:"new_password" binding:"required,min=9"`
 	ConfirmNewPassword string `json:"confirm_new_password" binding:"required"`
 }
 
-// Request to forgot_password_controller.go
 type ForgotPasswordRequest struct {
 	Email string `json:"email" binding:"required,email"`
 }
 
-// Request to product.go
 type CreateProductRequest struct {
 	Name          string  `json:"name" binding:"omitempty,min=3,max=100"`
 	Description   string  `json:"description" binding:"max=500"`
@@ -52,4 +47,19 @@ type UpdateProductRequest struct {
 type CartRequest struct {
 	ProductID int64 `json:"product_id" binding:"required"`
 	Quantity  int64 `json:"quantity" binding:"required"`
+}
+
+type CheckoutRequest struct {
+	CartID          int64  `json:"cart_id" binding:"required"`
+	ProductID       int64  `json:"product_id" binding:"required"`
+	Quantity        int64  `json:"quantity" binding:"required"`
+	Price           int64  `json:"price" binding:"required,min=0"`
+	ShippingAddress string `json:"shipping_address" binding:"required"`
+	PaymentMethod   string `json:"payment_method" binding:"required"`
+}
+
+type CheckoutPaymentRequest struct {
+	Cash string
+	Qris string
+	Card string
 }
