@@ -4,9 +4,9 @@ import "time"
 
 type Return struct {
 	ID           int64     `gorm:"column:id;primaryKey"`
-	OrderID      int64     `gorm:"not null" json:"order_id"`
-	Order        Order     `gorm:"foreignKey:OrderID" json:"order"`
-	UserID       User      `gorm:"not null" json:"user_id"`
+	CheckoutID   int64     `gorm:"not null" json:"checkout_id"`
+	Checkout     Checkout  `gorm:"foreignKey:CheckoutID" json:"checkout"`
+	UserID       int64     `gorm:"not null" json:"user_id"`
 	User         User      `gorm:"foreignKey:UserID" json:"user"`
 	ReturnAmount int64     `gorm:"not null" json:"return_amount"`
 	Reason       string    `gorm:"not null" json:"reason"`

@@ -5,26 +5,12 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/alwyalhaddad/belajar-golang-post/middleware"
 	"github.com/alwyalhaddad/belajar-golang-post/models"
 	"github.com/alwyalhaddad/belajar-golang-post/responses"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
-
-func GetAuthenticatedUserID(c *gin.Context) (int64, error) {
-	userID, exist := c.Get("user_id")
-	if !exist {
-		return 0, gorm.ErrRecordNotFound
-	}
-
-	// Convert value to int64
-	id, ok := userID.(int64)
-	if !ok {
-		return 0, gorm.ErrInvalidData
-	}
-
-	return id, nil
-}
 
 func AddItemToCart(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -41,7 +27,7 @@ func AddItemToCart(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		userID, err := GetAuthenticatedUserID(c)
+		userID, err := middleware.GetAuthenticatedUserID(c)
 		if err != nil {
 			responses.Error(c, http.StatusUnauthorized, "Unauthorized", "User not authenticated")
 			return
@@ -116,7 +102,7 @@ func AddItemToCart(db *gorm.DB) gin.HandlerFunc {
 // Handle retrieving content to users cart
 func GetCart(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		userID, err := GetAuthenticatedUserID(c)
+		userID, err := middleware.GetAuthenticatedUserID(c)
 		if err != nil {
 			responses.Error(c, http.StatusUnauthorized, "Unauthorized", "User not authenticated")
 			return
@@ -158,7 +144,7 @@ func UpdateCartItemQuantity(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		userID, err := GetAuthenticatedUserID(c)
+		userID, err := middleware.GetAuthenticatedUserID(c)
 		if err != nil {
 			responses.Error(c, http.StatusUnauthorized, "Unauthorized", "User not authenticated")
 			return
@@ -218,7 +204,7 @@ func RemoveCartItem(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		userID, err := GetAuthenticatedUserID(c)
+		userID, err := middleware.GetAuthenticatedUserID(c)
 		if err != nil {
 			responses.Error(c, http.StatusUnauthorized, "Unauthorized", "User not authenticated")
 			return

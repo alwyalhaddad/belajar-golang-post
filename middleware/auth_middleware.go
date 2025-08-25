@@ -68,3 +68,18 @@ func AuthMiddleware(db *gorm.DB) gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func GetAuthenticatedUserID(c *gin.Context) (int64, error) {
+	userID, exist := c.Get("user_id")
+	if !exist {
+		return 0, gorm.ErrRecordNotFound
+	}
+
+	// Convert value to int64
+	id, ok := userID.(int64)
+	if !ok {
+		return 0, gorm.ErrInvalidData
+	}
+
+	return id, nil
+}
