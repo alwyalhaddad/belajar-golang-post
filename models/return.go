@@ -5,7 +5,7 @@ import "time"
 type Return struct {
 	ID           int64     `gorm:"column:id;primaryKey"`
 	CheckoutID   int64     `gorm:"not null" json:"checkout_id"`
-	Checkout     Checkout  `gorm:"foreignKey:CheckoutID" json:"checkout"`
+	Order        Order     `gorm:"foreignKey:CheckoutID" json:"order"`
 	UserID       int64     `gorm:"not null" json:"user_id"`
 	User         User      `gorm:"foreignKey:UserID" json:"user"`
 	ReturnAmount int64     `gorm:"not null" json:"return_amount"`
