@@ -24,7 +24,7 @@ func MainRoutes(router *gin.Engine, db *gorm.DB) {
 		productGroup.POST("/products", controllers.CreateProduct(db))
 		productGroup.GET("/products", controllers.GetAllProduct(db))
 		productGroup.GET("/products/:id", controllers.GetProductById(db))
-		productGroup.PUT("/products/:id")
+		productGroup.PUT("/products/:id", controllers.UpdateProduct(db))
 	}
 
 	cartGroup := router.Group("cart")
