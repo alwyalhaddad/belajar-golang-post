@@ -13,7 +13,6 @@ func CreateProduct(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Bind request body JSON to struct CreateUpdateRequest
 		var request *models.CreateProductRequest
-
 		if err := c.ShouldBindBodyWithJSON(&request); err != nil {
 			responses.Error(c, http.StatusBadRequest, "Create Product Failed!", err.Error())
 			return

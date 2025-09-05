@@ -18,7 +18,8 @@ func GetAllProduct(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		responses.Success(c, http.StatusOK, "Get product success", gin.H{
-			"message": "Get all product successfuly",
+			"message":  "Get all product successfuly",
+			"products": request,
 		})
 	}
 }
